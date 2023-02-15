@@ -1,3 +1,4 @@
+global using AutoMapper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,26 +15,36 @@ namespace dotnet_rpg.Services.CharacterService
             new Character { Id = 1, Name = "Sam" }
         };
 
+        public readonly IMapper _mapper;
+
+        public CharacterService(IMapper mapper)
+        {
+            _mapper = mapper;
+
+        }
+
         public async Task<ServiceReponse<List<GetCharacterDTO>>> AddCharacter(AddCharacterDTO newCharacter)
         {
             var serviceReponse = new ServiceReponse<List<GetCharacterDTO>>();
-            characters.Add(newCharacter);
-            serviceReponse.Data = characters;
+            var character = _mapper.Map<Character>(newCharacter);
+            character.Id = characters.Max(c => c.Id) + 1;
+            characters.Add(character);
+            serviceReponse.Data = characters.Select(c => _mapper.Map<GetCharacterDTO>(c)).ToList();
             return serviceReponse;
         }
 
         public async Task<ServiceReponse<List<GetCharacterDTO>>> GetAllCharacters()
         {
-            var serviceReponse = new ServiceReponse<List<Character>>();
-            serviceReponse.Data = characters;
+            var serviceReponse = new ServiceReponse<List<GetCharacterDTO>>();
+            serviceReponse.Data = characters.Select(c => _mapper.Map<GetCharacterDTO>(c)).ToList();
             return serviceReponse;
         }
 
         public async Task<ServiceReponse<GetCharacterDTO>> GetCharacterById(int id)
         {
-            var serviceReponse = new ServiceReponse<Character>();
+            var serviceReponse = new ServiceReponse<GetCharacterDTO>();
             var character = characters.FirstOrDefault(c => c.Id == id);
-            serviceReponse.Data = character;
+            serviceReponse.Data = _mapper.Map<GetCharacterDTO>(character);
             return serviceReponse;
         }
     }
