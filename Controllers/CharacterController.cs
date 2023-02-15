@@ -18,19 +18,19 @@ namespace dotnet_rpg.Controllers
         }
 
         [HttpGet("GetAll")]
-        public async Task<ActionResult<ServiceReponse<List<Character>>>> Get()
+        public async Task<ActionResult<ServiceReponse<List<GetCharacterDTO>>>> Get()
         {
             return Ok(await _characterService.GetAllCharacters());
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ServiceReponse<Character>>> GetSingle(int id)
+        public async Task<ActionResult<ServiceReponse<GetCharacterDTO>>> GetSingle(int id)
         {
             return Ok(await _characterService.GetCharacterById(id));
         }
 
         [HttpPost]
-        public async Task<ActionResult<ServiceReponse<List<Character>>>> AddCharacter(Character newCharacter)
+        public async Task<ActionResult<ServiceReponse<List<GetCharacterDTO>>>> AddCharacter(AddCharacterDTO newCharacter)
         {
             return Ok(await _characterService.AddCharacter(newCharacter));
         }
