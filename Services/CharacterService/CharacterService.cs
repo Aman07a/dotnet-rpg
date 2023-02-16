@@ -16,25 +16,27 @@ namespace dotnet_rpg.Services.CharacterService
         };
 
         public readonly IMapper _mapper;
+        private readonly DataContext _context;
 
-        public CharacterService(IMapper mapper)
+        public CharacterService(IMapper mapper, DataContext context)
         {
+            _context = context;
             _mapper = mapper;
-
         }
 
         public async Task<ServiceReponse<List<GetCharacterDTO>>> GetAllCharacters()
         {
             var serviceReponse = new ServiceReponse<List<GetCharacterDTO>>();
-            serviceReponse.Data = characters.Select(c => _mapper.Map<GetCharacterDTO>(c)).ToList();
+            var dbCharacters = await _context.Characters.ToListAsync();
+            serviceReponse.Data = dbCharacters.Select(c => _mapper.Map<GetCharacterDTO>(c)).ToList();
             return serviceReponse;
         }
 
         public async Task<ServiceReponse<GetCharacterDTO>> GetCharacterById(int id)
         {
             var serviceReponse = new ServiceReponse<GetCharacterDTO>();
-            var character = characters.FirstOrDefault(c => c.Id == id);
-            serviceReponse.Data = _mapper.Map<GetCharacterDTO>(character);
+            var dbCharacter = await _context.Characters.FirstOrDefaultAsync(c => c.Id == id);
+            serviceReponse.Data = _mapper.Map<GetCharacterDTO>(dbCharacter);
             return serviceReponse;
         }
 
